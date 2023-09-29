@@ -2,33 +2,35 @@ const express = require('express')
 const mysql = require('mysql');
 
 const app = express();
-app.use(express.json());
+app.use(express.json()); //เรียกใช้ express.json เพื่อแปรง Javascript Object เป็น Json Object
 
-// MySQL Connection
+// MySQL สร้างตัวแปร Connection 
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: '',
     database: 'mysql_nodejs',
-    port: '8889'
+    port: '3306',
 })
 
+// สร้างตัวแปรตรวจสอบการเชื่อมต่อฐานข้อมูล
 connection.connect((err) => {
     if (err) {
         console.log('Error connecting to MySQL database = ', err)
-        return;
+        return; // หยุดทำงาน
     }
     console.log('MySQL successfully connected!');
 })
 
-// CREATE Routes
+// CREATE Routes 
+// ดึงตัวแปร App มาแล้วกำหนดเป็น Post สำหรับเพิ่มข้อมูล
 app.post("/create", async (req, res) => {
-    const { email, name, password } = req.body;
+    const { email, name, password } = req.body; 
 
     try {
         connection.query(
-            "INSERT INTO users(email, fullname, password) VALUES(?, ?, ?)",
-            [email, name, password],
+            "INSERT INTO users(email, fullname, password) VALUES(?, ?, ?)", //แทนที่ค่าด้วย ? อาร์กิวเมนต์แรก
+            [email, name, password], //อาร์กิวเมนต์สอง เป็น Array
             (err, results, fields) => {
                 if (err) {
                     console.log("Error while inserting a user into the database", err);
